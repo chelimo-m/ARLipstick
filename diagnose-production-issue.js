@@ -1,0 +1,31 @@
+console.log("=== Production Products Issue Diagnosis ===");
+console.log("\n=== Common Causes ===");
+console.log("1. Environment variables not set in Vercel");
+console.log("2. Firebase Admin credentials missing in production");
+console.log("3. Database permissions/security rules");
+console.log("4. API route errors in production");
+console.log("\n=== Step 1: Check Vercel Environment Variables ===");
+console.log("1. Go to: https://vercel.com/dashboard");
+console.log("2. Select your project: arl-ipstick");
+console.log("3. Go to 'Settings' > 'Environment Variables'");
+console.log("4. Verify these variables are set:");
+console.log("   - NEXT_PUBLIC_FIREBASE_PROJECT_ID");
+console.log("   - FIREBASE_CLIENT_EMAIL");
+console.log("   - FIREBASE_PRIVATE_KEY");
+console.log("   - CLOUDINARY_CLOUD_NAME");
+console.log("   - CLOUDINARY_API_KEY");
+console.log("   - CLOUDINARY_API_SECRET");
+console.log("\n=== Step 2: Test API Endpoint ===");
+console.log("1. Visit: https://arl-ipstick.vercel.app/api/products");
+console.log("2. Check if it returns products or an error");
+console.log("3. If error, check browser console for details");
+console.log("\n=== Step 3: Check Firebase Console ===");
+console.log(
+	"1. Go to: https://console.firebase.google.com/project/arlipstick-84040/firestore/data"
+);
+console.log("2. Verify products exist in the 'products' collection");
+console.log("3. Check Firestore rules allow read access");
+console.log("\n=== Step 4: Check Vercel Function Logs ===");
+console.log("1. Go to: https://vercel.com/dashboard");
+console.log("2. Select your project > 'Functions' tab");
+console.log("3. Check for any errors in the API routes");

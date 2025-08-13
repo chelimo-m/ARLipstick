@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read/write access to email queue for authenticated users
+    match /emailQueue/{emailId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Allow read/write access to login codes for authenticated users
+    match /loginCodes/{codeId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Allow read/write access to registration codes for authenticated users
+    match /registrationCodes/{codeId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Allow read/write access to users for authenticated users
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+} 

@@ -1,0 +1,30 @@
+console.log("=== Vercel Environment Variables Setup ===");
+console.log("\n=== Required Environment Variables ===");
+console.log("You need to add these to your Vercel project:");
+console.log("\n1. NEXT_PUBLIC_FIREBASE_PROJECT_ID");
+console.log("   Value: arlipstick-84040");
+console.log("\n2. FIREBASE_CLIENT_EMAIL");
+console.log(
+	"   Value: firebase-adminsdk-fbsvc@arlipstick-84040.iam.gserviceaccount.com"
+);
+console.log("\n3. FIREBASE_PRIVATE_KEY");
+console.log("   Value: (Copy from firebase-migration-template.env)");
+console.log("\n4. CLOUDINARY_CLOUD_NAME");
+console.log("   Value: (Your Cloudinary cloud name)");
+console.log("\n5. CLOUDINARY_API_KEY");
+console.log("   Value: (Your Cloudinary API key)");
+console.log("\n6. CLOUDINARY_API_SECRET");
+console.log("   Value: (Your Cloudinary API secret)");
+console.log("\n=== Steps to Add in Vercel ===");
+console.log("1. Go to: https://vercel.com/dashboard");
+console.log("2. Select your project: arl-ipstick");
+console.log("3. Go to 'Settings' > 'Environment Variables'");
+console.log("4. Click 'Add New' for each variable above");
+console.log("5. Set Environment to 'Production'");
+console.log("6. Click 'Save'");
+console.log("7. Redeploy your project");
+console.log("\n=== After Adding Variables ===");
+console.log("1. Go to 'Deployments' tab");
+console.log("2. Click 'Redeploy' on your latest deployment");
+console.log("3. Wait for deployment to complete");
+console.log("4. Test: https://arl-ipstick.vercel.app/api/products");
