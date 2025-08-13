@@ -74,13 +74,16 @@ export async function POST(req: NextRequest) {
 			.doc(codeId)
 			.update({ used: true });
 
+		// Use the Auth user ID if available, otherwise use Firestore document ID
+		const authUserId = userData.userId || userId;
+		
 		// Create a custom token for the user
-		const customToken = await firebaseApp.auth().createCustomToken(userId);
+		const customToken = await firebaseApp.auth().createCustomToken(authUserId);
 
 		return NextResponse.json({
 			message: "Login successful",
 			user: {
-				uid: userId,
+				uid: authUserId,
 				email: userData.email,
 				displayName: userData.displayName,
 				photoURL: userData.photoURL,

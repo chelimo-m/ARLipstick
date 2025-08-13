@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getFirebaseAdmin } from "../../../firebaseAdmin";
 import directEmailService from "../../../utils/directEmailService";
+import { createUserCart } from "../../../utils/cartUtils";
 
 export const dynamic = "force-dynamic";
 
@@ -31,13 +32,14 @@ export async function POST(req: NextRequest) {
 
 		let userRef;
 		let existingUserId;
+		let authUserId;
 
 		if (resend && userId) {
 			// For resend, use existing user ID
 			existingUserId = userId;
 			userRef = { id: userId };
 		} else {
-			// Check if user already exists
+			// Check if user already exists in Firestore
 			const existingUser = await firebaseApp
 				.firestore()
 				.collection("users")
@@ -52,15 +54,34 @@ export async function POST(req: NextRequest) {
 				);
 			}
 
-			// Create a new user document
+			// Check if user exists in Firebase Auth
+			try {
+				const authUser = await firebaseApp.auth().getUserByEmail(email);
+				authUserId = authUser.uid;
+			} catch (error) {
+				// User doesn't exist in Auth, create them
+				const authUserRecord = await firebaseApp.auth().createUser({
+					email,
+					displayName,
+					emailVerified: false,
+				});
+				authUserId = authUserRecord.uid;
+			}
+
+			// Create a new user document in Firestore
 			userRef = await firebaseApp.firestore().collection("users").add({
+				userId: authUserId,
 				email,
 				displayName,
 				roleId: "customer", // Default role is 'customer', not 'user'
 				profileCompleted: false,
 				status: "pending",
 				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
 			});
+
+			// Create a cart for the new user
+			await createUserCart(authUserId, firebaseApp);
 		}
 
 		// If resending, check for recent codes to prevent spam

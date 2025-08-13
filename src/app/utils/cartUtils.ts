@@ -73,3 +73,27 @@ export function calculateDiscountPercentage(
 	if (oldPrice <= price) return 0;
 	return Math.round(((oldPrice - price) / oldPrice) * 100);
 }
+
+/**
+ * Creates a cart for a new user
+ * @param userId - The user's ID
+ * @param firebaseApp - Firebase Admin instance
+ */
+export async function createUserCart(userId: string, firebaseApp: any) {
+	try {
+		const cartData = {
+			cartId: userId,
+			userId,
+			items: [],
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+		};
+
+		await firebaseApp.firestore().collection("carts").doc(userId).set(cartData);
+		console.log(`✅ Cart created for user: ${userId}`);
+		return cartData;
+	} catch (error) {
+		console.error("Error creating cart for user:", error);
+		throw error;
+	}
+}

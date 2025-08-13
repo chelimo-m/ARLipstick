@@ -245,6 +245,12 @@ async function registerAdmin() {
 				phone: "+254700000001",
 				bio: "System Administrator for AR Lipstick",
 			},
+			{
+				email: "chelimo831@gmail.com",
+				displayName: "Chelimo M",
+				phone: "+254700000002",
+				bio: "System Administrator for AR Lipstick",
+			},
 		];
 
 		// Process each admin user

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getFirebaseAdmin } from "../../../firebaseAdmin";
+import { createUserCart } from "../../../utils/cartUtils";
 
 export const dynamic = "force-dynamic";
 
@@ -59,11 +60,44 @@ export async function POST(req: NextRequest) {
 			.doc(codeId)
 			.update({ used: true });
 
-		// Activate the user account
-		await firebaseApp.firestore().collection("users").doc(userId).update({
+		// Get user data to check if we need to link with Auth
+		const userDoc = await firebaseApp
+			.firestore()
+			.collection("users")
+			.doc(userId)
+			.get();
+
+		const userData = userDoc.data();
+
+		// Update user status and link with Auth if needed
+		const updateData: any = {
 			status: "active",
 			profileCompleted: true,
-		});
+			updatedAt: new Date().toISOString(),
+		};
+
+		// If user doesn't have userId field, try to find the Auth user
+		if (!userData?.userId) {
+			try {
+				const authUser = await firebaseApp.auth().getUserByEmail(userData?.email);
+				updateData.userId = authUser.uid;
+			} catch (error) {
+				console.log("Could not find Auth user for email:", userData?.email);
+			}
+		}
+
+		// Activate the user account
+		await firebaseApp.firestore().collection("users").doc(userId).update(updateData);
+
+		// Create cart for user if it doesn't exist
+		const authUserId = updateData.userId || userData?.userId;
+		if (authUserId) {
+			try {
+				await createUserCart(authUserId, firebaseApp);
+			} catch (error) {
+				console.log("Cart might already exist for user:", authUserId);
+			}
+		}
 
 		// Get the updated user data
 		const userDoc = await firebaseApp
@@ -74,13 +108,16 @@ export async function POST(req: NextRequest) {
 
 		const userData = userDoc.data();
 
+		// Use the Auth user ID if available, otherwise use Firestore document ID
+		const authUserId = userData?.userId || userId;
+
 		// Create a custom token for the user
-		const customToken = await firebaseApp.auth().createCustomToken(userId);
+		const customToken = await firebaseApp.auth().createCustomToken(authUserId);
 
 		return NextResponse.json({
 			message: "Registration successful",
 			user: {
-				uid: userId,
+				uid: authUserId,
 				email: userData?.email,
 				displayName: userData?.displayName,
 				photoURL: userData?.photoURL,
